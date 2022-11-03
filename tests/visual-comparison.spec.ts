@@ -6,15 +6,16 @@ import {
   PROD
 } from '../utils/constants'
 import {
-  visualRegressionTest
+  generateVisualComparison,
 } from '../utils/utils'
 
 // Loop Pages and make tests
 if (pages) {
   pages.forEach(async (url) => {
-    await visualRegressionTest({
+    await generateVisualComparison({
       url: url,
-      site1: PROD
+      site1: SB2,
+      site2: PROD
     })
   })
 }
