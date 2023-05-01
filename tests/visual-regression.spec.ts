@@ -1,13 +1,17 @@
-import { test } from '@playwright/test'
-import pages from '../data/pages'
+import { test } from '@playwright/test';
+import pages from '../data/pages';
+import { visualRegressionTest } from '../utils/utils';
 import {
+  DEV,
+  DEVLP,
   SB,
+  SBLP,
   SB2,
-  PROD
-} from '../utils/constants'
-import {
-  visualRegressionTest
-} from '../utils/utils'
+  SUPPORT,
+  SUPPORTLP,
+  PROD,
+  PRODLP
+} from '../utils/constants';
 
 // Loop Pages and make tests
 if (pages) {
@@ -15,8 +19,8 @@ if (pages) {
     await visualRegressionTest({
       url: url,
       site1: PROD
-    })
-  })
+    });
+  });
 }
 
 

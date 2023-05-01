@@ -1,23 +1,27 @@
-import { test } from '@playwright/test'
-import pages from '../data/pages'
+import { test } from '@playwright/test';
+import pages from '../data/pages';
+import { visualComparisonTest } from '../utils/utils';
 import {
+  DEV,
+  DEVLP,
   SB,
+  SBLP,
   SB2,
-  PROD
-} from '../utils/constants'
-import {
-  generateVisualComparison,
-} from '../utils/utils'
+  SUPPORT,
+  SUPPORTLP,
+  PROD,
+  PRODLP
+} from '../utils/constants';
 
 // Loop Pages and make tests
 if (pages) {
   pages.forEach(async (url) => {
-    await generateVisualComparison({
+    await visualComparisonTest({
       url: url,
-      site1: SB2,
+      site1: SUPPORT,
       site2: PROD
-    })
-  })
+    });
+  });
 }
 
 

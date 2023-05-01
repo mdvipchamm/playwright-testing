@@ -1,14 +1,12 @@
-import * as fs from 'fs'
-import { PNG } from 'pngjs'
-import { blockRequests } from './blockRequests'
+import * as fs from 'fs';
+import { PNG } from 'pngjs';
+import { blockRequests } from './blockRequests';
+import { PROD } from './constants';
 import {
   test,
   expect,
   type Page
-} from '@playwright/test'
-import {
-  PROD
-} from './constants'
+} from '@playwright/test';
 
 // Define options types.
 type optionsType = {
@@ -23,16 +21,16 @@ type optionsType = {
  */
 const validateNetworkRequests = async (page: Page) => {
   await page.route('**/*', async (route, request) => {
-    let blockRequest = false
-    const url = request.url()
+    let blockRequest = false;
+    const url = request.url();
     blockRequests.forEach((urlToBlock) => {
       if (url.includes(urlToBlock)) {
-        blockRequest = true
-        console.log(`[${page.url()}] - Blocking Request ${url}`)
+        blockRequest = true;
+        console.log(`[${page.url()}] - Blocking Request ${url}`);
       }
-    })
-    return (!blockRequest) ? route.continue() : route.abort()
-  })
+    });
+    return (!blockRequest) ? route.continue() : route.abort();
+  });
 }
 
 /* Generate a Visual Comparison.
@@ -42,7 +40,7 @@ const validateNetworkRequests = async (page: Page) => {
  *   - If blockRequests is not defined it will default to true.
  *   - Diff is determined by our thresholds set in the configurations below.
  */
-export const generateVisualComparison = async (options) => {
+export const visualComparisonTest = async (options) => {
   const defaultOptions: optionsType = {
     url: '/',
     site1: PROD,
@@ -51,20 +49,20 @@ export const generateVisualComparison = async (options) => {
   }
 
   // Merge options.
-  options = {...defaultOptions, ...options}
+  options = {...defaultOptions, ...options};
 
   /* Clean the URL, used in naming our test and generating folders.
    *   Set '/' to homepage and strip '/' from any other url
    *   replacing '/' with nothing, playwright will turn that into an underscore.
    */
-  const sanitizedUrl = (options.url === '/') ? 'homepage' : options.url.replace('/', '')
+  const sanitizedUrl = (options.url === '/') ? 'homepage' : options.url.replace('/', '');
   test(`${options.site1} to ${options.site2} on ${sanitizedUrl}`, async ({ page }) => {
     if (options.blockRequests) {
       // Validate network requests for the current page.
-      await validateNetworkRequests(page)
+      await validateNetworkRequests(page);
     }
     // Navigate to the page.
-    await page.goto(`https://${options.site1}${options.url}`)
+    await page.goto(`https://${options.site1}${options.url}`);
     /* Generate a screenshot for the current page.
      *   https://playwright.dev/docs/test-assertions#locator-assertions-to-have-screenshot-1
      *   - Saves a screenshot to the /test-results folder.
@@ -78,10 +76,10 @@ export const generateVisualComparison = async (options) => {
     }).then(async () => {
       if (options.blockRequests) {
         // Validate network requests for the current page.
-        await validateNetworkRequests(page)
+        await validateNetworkRequests(page);
       }
       // Navigate to the page we want to compare the previously generated screenshot to.
-      await page.goto(`https://www.${options.site2}${options.url}`)
+      await page.goto(`https://www.${options.site2}${options.url}`);
       // Temporarily generate a screenshot with the same settings as above 'fullPage'.
       await expect(await page.screenshot({
         fullPage: true
@@ -96,9 +94,9 @@ export const generateVisualComparison = async (options) => {
        */
       .toMatchSnapshot(`${options.site1}-${sanitizedUrl}.png`, {
         threshold: 0.2
-      })
-    })
-  })
+      });
+    });
+  });
 }
 
 
@@ -110,20 +108,20 @@ export const visualRegressionTest = async (options: optionsType) => {
   }
 
   // Merge options.
-  options = {...defaultOptions, ...options}
+  options = {...defaultOptions, ...options};
 
   /* Clean the URL, used in naming our test and generating folders.
    *   Set '/' to homepage and strip '/' from any other url
    *   replacing '/' with nothing, playwright will turn that into an underscore.
    */
-  const sanitizedUrl = (options.url === '/') ? 'homepage' : options.url.replace('/', '')
+  const sanitizedUrl = (options.url === '/') ? 'homepage' : options.url.replace('/', '');
   test(`${options.site1} - ${sanitizedUrl}`, async ({ page }) => {
     if (options.blockRequests) {
       // Validate network requests for the current page.
-      await validateNetworkRequests(page)
+      await validateNetworkRequests(page);
     }
     // Navigate to the page.
-    await page.goto(`https://${options.site1}${options.url}`)
+    await page.goto(`https://${options.site1}${options.url}`);
     /* Generate a screenshot for the current page.
      *   https://playwright.dev/docs/test-assertions#locator-assertions-to-have-screenshot-1
      *   - Saves a screenshot to the /test-results folder.
@@ -134,8 +132,8 @@ export const visualRegressionTest = async (options: optionsType) => {
     await expect(page).toHaveScreenshot(`${options.site1}-${sanitizedUrl}.png`, {
       maxDiffPixels: 10,
       fullPage: true
-    })
-  })
+    });
+  });
 }
 
 export const generateDiff = () => {
