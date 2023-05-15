@@ -79,7 +79,7 @@ export const visualComparisonTest = async (options) => {
         await validateNetworkRequests(page);
       }
       // Navigate to the page we want to compare the previously generated screenshot to.
-      await page.goto(`https://www.${options.site2}${options.url}`);
+      await page.goto(`https://${options.site2}${options.url}`);
       // Temporarily generate a screenshot with the same settings as above 'fullPage'.
       await expect(await page.screenshot({
         fullPage: true
@@ -115,7 +115,7 @@ export const visualRegressionTest = async (options: optionsType) => {
    *   replacing '/' with nothing, playwright will turn that into an underscore.
    */
   const sanitizedUrl = (options.url === '/') ? 'homepage' : options.url.replace('/', '');
-  test(`${options.site1} - ${sanitizedUrl}`, async ({ page }) => {
+  test(`MDVIP - ${sanitizedUrl}`, async ({ page }) => {
     if (options.blockRequests) {
       // Validate network requests for the current page.
       await validateNetworkRequests(page);
@@ -129,7 +129,7 @@ export const visualRegressionTest = async (options: optionsType) => {
      *       In our case we want to compare the full page, so we pass fullPage and
      *       we want to detect the smallest changes, so we set it to a maxDiffPixels of 10.
      */
-    await expect(page).toHaveScreenshot(`${options.site1}-${sanitizedUrl}.png`, {
+    await expect(page).toHaveScreenshot(`MDVIP-${sanitizedUrl}.png`, {
       maxDiffPixels: 10,
       fullPage: true
     });
